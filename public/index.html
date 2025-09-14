@@ -1,2433 +1,301 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <meta name="description" content="Skeleton App - Estrutura base minimalista para projetos Node.js + Express com testes automatizados e CI/CD">
-  <meta name="keywords" content="Node.js, Express, API, Testing, Jest, ESLint, Skeleton">
-  <meta name="author" content="Skeleton App">
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://skeleton-app.netlify.app/">
-  <meta property="og:title" content="Skeleton App - Node.js + Express">
-  <meta property="og:description" content="Estrutura base minimalista para projetos Node.js + Express">
-  
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:title" content="Skeleton App - Node.js + Express">
-  <meta property="twitter:description" content="Estrutura base minimalista para projetos Node.js + Express">
-  
-  <title>Skeleton App - API Documentation</title>
-  <style>
-    :root {
-      /* Colors optimized for dark theme with high contrast */
-      --text-primary: #ffffff;          /* Pure white for maximum contrast */
-      --text-secondary: #e2e8f0;        /* Light gray for secondary text */
-      --text-muted: #94a3b8;            /* Muted but still readable */
-      --accent-color: #60a5fa;          /* Blue with excellent contrast */
-      --accent-hover: #3b82f6;          /* Darker blue for hover */
-      --success-color: #22c55e;         /* Vibrant green */
-      --warning-color: #f59e0b;         /* Orange */
-      --error-color: #ef4444;           /* Red */
-      
-      /* Backgrounds with proper contrast */
-      --bg-primary: #0f172a;            /* Very dark blue-gray */
-      --bg-secondary: #1e293b;          /* Slightly lighter */
-      --bg-card: rgba(30, 41, 59, 0.95); /* Semi-transparent cards */
-      --bg-code: rgba(15, 23, 42, 0.95); /* Code blocks */
-      --bg-overlay: rgba(0, 0, 0, 0.8);   /* Modal overlays */
-      
-      /* Borders and dividers */
-      --border-primary: rgba(148, 163, 184, 0.3);
-      --border-secondary: rgba(71, 85, 105, 0.5);
-      
-      /* Legacy colors (deprecated - keeping for backward compatibility) */
-      --primary-color: #667eea;
-      --secondary-color: #764ba2;
-      --text-color: var(--text-primary); /* Map to new system */
-      --text-light: var(--text-muted);
-      --bg-light: var(--bg-secondary);
-      --bg-white: var(--bg-card);
-      --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-      --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.4);
-      
-      /* Typography Scale - 16px base for accessibility */
-      --font-size-xs: 0.75rem;    /* 12px */
-      --font-size-sm: 0.875rem;   /* 14px */
-      --font-size-base: 1rem;     /* 16px */
-      --font-size-lg: 1.125rem;   /* 18px */
-      --font-size-xl: 1.25rem;    /* 20px */
-      --font-size-2xl: 1.5rem;    /* 24px */
-      --font-size-3xl: 1.875rem;  /* 30px */
-      --font-size-4xl: 2.25rem;   /* 36px */
-      
-      /* Spacing Scale - 8px base */
-      --spacing-1: 0.5rem;  /* 8px */
-      --spacing-2: 1rem;    /* 16px */
-      --spacing-3: 1.5rem;  /* 24px */
-      --spacing-4: 2rem;    /* 32px */
-      --spacing-6: 3rem;    /* 48px */
-      
-      /* Line heights for readability */
-      --line-height-tight: 1.25;
-      --line-height-normal: 1.5;
-      --line-height-relaxed: 1.625;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    html, body {
-      overflow-x: hidden;
-      width: 100%;
-    }
-
-    body {
-      font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-      font-size: var(--font-size-base); /* 16px base for accessibility */
-      line-height: var(--line-height-normal);
-      background: var(--bg-primary); /* Very dark but not pure black */
-      min-height: 100vh;
-      color: var(--text-primary); /* Pure white for maximum contrast */
-      overflow-x: hidden;
-      position: relative;
-    }
-    
-    /* Improve all interactive elements for accessibility */
-    .try-button, .copy-btn, .step-number {
-      min-height: 44px; /* WCAG touch target minimum */
-      min-width: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: var(--text-primary);
-      background: var(--accent-color);
-      border: none;
-      border-radius: 6px;
-    }
-    
-    .try-button:hover, .copy-btn:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-      color: var(--text-primary);
-    }
-    
-    .try-button:focus, .copy-btn:focus {
-      outline: 2px solid var(--accent-color);
-      outline-offset: 2px;
-    }
-
-    /* Space Background */
-    .space-background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: 
-        radial-gradient(ellipse at top, #1e3a8a 0%, #0a0a0a 50%),
-        radial-gradient(ellipse at bottom, #312e81 0%, #0a0a0a 50%);
-      z-index: -3;
-    }
-
-    /* Stars */
-    .stars {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -2;
-    }
-
-    .star {
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-      animation: twinkle 3s infinite;
-    }
-
-    .star.small {
-      width: 1px;
-      height: 1px;
-    }
-
-    .star.medium {
-      width: 2px;
-      height: 2px;
-      box-shadow: 0 0 6px #fff;
-    }
-
-    .star.large {
-      width: 3px;
-      height: 3px;
-      box-shadow: 0 0 12px #fff, 0 0 24px #fff;
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 1; }
-    }
-
-    /* Galaxy */
-    .galaxy {
-      position: fixed;
-      top: 10%;
-      right: 10%;
-      width: 300px;
-      height: 200px;
-      background: 
-        radial-gradient(ellipse, 
-          rgba(147, 51, 234, 0.3) 0%, 
-          rgba(59, 130, 246, 0.2) 30%, 
-          rgba(16, 185, 129, 0.1) 60%, 
-          transparent 80%);
-      border-radius: 50%;
-      animation: galaxyRotate 60s linear infinite;
-      z-index: -2;
-      filter: blur(1px);
-    }
-
-    @keyframes galaxyRotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    /* Planets */
-    .planet {
-      position: fixed;
-      border-radius: 50%;
-      z-index: -2;
-    }
-
-    .planet-1 {
-      top: 20%;
-      left: 15%;
-      width: 60px;
-      height: 60px;
-      background: 
-        radial-gradient(circle at 30% 30%, #fbbf24, #f59e0b, #d97706);
-      box-shadow: 
-        0 0 20px rgba(251, 191, 36, 0.4),
-        inset -10px -10px 0 rgba(217, 119, 6, 0.3);
-      animation: planetFloat1 20s ease-in-out infinite;
-    }
-
-    .planet-2 {
-      bottom: 25%;
-      left: 25%;
-      width: 40px;
-      height: 40px;
-      background: 
-        radial-gradient(circle at 25% 25%, #3b82f6, #1d4ed8, #1e40af);
-      box-shadow: 
-        0 0 15px rgba(59, 130, 246, 0.4),
-        inset -8px -8px 0 rgba(30, 64, 175, 0.3);
-      animation: planetFloat2 25s ease-in-out infinite;
-    }
-
-    .planet-3 {
-      top: 60%;
-      right: 20%;
-      width: 80px;
-      height: 80px;
-      background: 
-        radial-gradient(circle at 35% 35%, #10b981, #059669, #047857);
-      box-shadow: 
-        0 0 25px rgba(16, 185, 129, 0.4),
-        inset -15px -15px 0 rgba(4, 120, 87, 0.3);
-      animation: planetFloat3 30s ease-in-out infinite;
-    }
-
-    .planet-4 {
-      top: 15%;
-      right: 35%;
-      width: 30px;
-      height: 30px;
-      background: 
-        radial-gradient(circle at 30% 30%, #ec4899, #db2777, #be185d);
-      box-shadow: 
-        0 0 12px rgba(236, 72, 153, 0.4),
-        inset -6px -6px 0 rgba(190, 24, 93, 0.3);
-      animation: planetFloat4 18s ease-in-out infinite;
-    }
-
-    @keyframes planetFloat1 {
-      0%, 100% { transform: translateY(0px) translateX(0px); }
-      25% { transform: translateY(-20px) translateX(10px); }
-      50% { transform: translateY(-10px) translateX(-15px); }
-      75% { transform: translateY(15px) translateX(5px); }
-    }
-
-    @keyframes planetFloat2 {
-      0%, 100% { transform: translateY(0px) translateX(0px); }
-      33% { transform: translateY(15px) translateX(-10px); }
-      66% { transform: translateY(-12px) translateX(8px); }
-    }
-
-    @keyframes planetFloat3 {
-      0%, 100% { transform: translateY(0px) translateX(0px); }
-      30% { transform: translateY(-25px) translateX(-12px); }
-      60% { transform: translateY(10px) translateX(20px); }
-      90% { transform: translateY(-5px) translateX(-8px); }
-    }
-
-    @keyframes planetFloat4 {
-      0%, 100% { transform: translateY(0px) translateX(0px); }
-      40% { transform: translateY(12px) translateX(15px); }
-      80% { transform: translateY(-18px) translateX(-10px); }
-    }
-
-    /* Shooting Stars */
-    .shooting-star {
-      position: fixed;
-      width: 2px;
-      height: 2px;
-      background: white;
-      border-radius: 50%;
-      z-index: -1;
-      animation: shootingStar 3s linear infinite;
-    }
-
-    @keyframes shootingStar {
-      0% {
-        opacity: 0;
-        transform: translateX(-100px) translateY(-100px);
-      }
-      10% {
-        opacity: 1;
-        box-shadow: 0 0 6px #fff, -20px -20px 10px rgba(255, 255, 255, 0.5);
-      }
-      90% {
-        opacity: 1;
-        box-shadow: 0 0 6px #fff, -20px -20px 10px rgba(255, 255, 255, 0.5);
-      }
-      100% {
-        opacity: 0;
-        transform: translateX(100vw) translateY(100vh);
-        box-shadow: 0 0 6px #fff, -20px -20px 10px rgba(255, 255, 255, 0.5);
-      }
-    }
-
-    /* Nebula effect */
-    .nebula {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: 
-        radial-gradient(ellipse at 20% 80%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-        radial-gradient(ellipse at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
-      z-index: -2;
-      animation: nebulaShift 45s ease-in-out infinite alternate;
-    }
-
-    @keyframes nebulaShift {
-      0% { 
-        background: 
-          radial-gradient(ellipse at 20% 80%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
-          radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-          radial-gradient(ellipse at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
-      }
-      100% { 
-        background: 
-          radial-gradient(ellipse at 80% 20%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
-          radial-gradient(ellipse at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-          radial-gradient(ellipse at 60% 60%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
-      }
-    }
-
-    .floating-particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .particle {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 50%;
-      animation: float 25s infinite linear;
-      box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
-    }
-
-    @keyframes float {
-      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-    }
-
-    /* Base responsive utilities */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: var(--spacing-4); /* 32px */
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    /* Flexible grid system */
-    .content-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-bottom: 3rem;
-      width: 100%;
-    }
-
-    .guide-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 2rem;
-      margin-bottom: 2rem;
-      width: 100%;
-    }
-
-    /* Responsive images and media */
-    img, video, svg {
-      max-width: 100%;
-      height: auto;
-    }
-
-    /* Typography - Logo and headings */
-    .logo {
-      font-size: clamp(2rem, 5vw, 3rem);
-      font-weight: 700;
-      color: var(--text-primary); /* Solid white text instead of gradient */
-      margin-bottom: var(--spacing-2);
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      line-height: var(--line-height-tight);
-      text-align: center;
-    }
-
-    .subtitle {
-      font-size: clamp(1rem, 2.5vw, 1.2rem);
-      color: var(--text-secondary);
-      text-align: center;
-      margin-bottom: var(--spacing-4);
-      font-weight: 400;
-      line-height: var(--line-height-normal);
-    }
-    
-    /* Main title for pages */
-    .main-title {
-      font-size: var(--font-size-3xl);
-      font-weight: 700;
-      color: var(--text-primary);
-      text-align: center;
-      margin-bottom: var(--spacing-2);
-    }
-    
-    /* Section titles */
-    .section-title {
-      font-size: var(--font-size-2xl);
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: var(--spacing-4);
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--spacing-2);
-    }
-    
-    /* API endpoints styling */
-    .api-endpoint {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
-      padding: var(--spacing-3);
-      background: var(--bg-card);
-      border: 1px solid var(--border-primary);
-      border-radius: 8px;
-      margin: var(--spacing-2) 0;
-    }
-    
-    .method-badge {
-      background: var(--success-color);
-      color: var(--text-primary);
-      padding: var(--spacing-1);
-      border-radius: 4px;
-      font-weight: 600;
-      font-size: var(--font-size-sm);
-      min-width: 60px;
-      text-align: center;
-    }
-    
-    .endpoint-url {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--primary-color);
-      font-size: var(--font-size-sm);
-      flex: 1;
-    }
-
-    .section-title {
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 3rem;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: fadeInUp 1s ease-out;
-      line-height: 1.2;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
-      color: white;
-      font-weight: 500;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background: #48bb78;
-      border-radius: 50%;
-      margin-right: 0.5rem;
-      animation: blink 1.5s infinite;
-    }
-
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0.3; }
-    }
-
-    .content-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 2rem;
-      margin-bottom: 3rem;
-    }
-
-    /* Flexible card system */
-    .card, .guide-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      padding: clamp(1.5rem, 3vw, 2rem);
-      box-shadow: var(--shadow);
-      transition: all 0.3s ease;
-      animation: fadeInUp 1s ease-out;
-      animation-delay: 0.2s;
-      animation-fill-mode: both;
-      width: 100%;
-      box-sizing: border-box;
-      min-height: fit-content;
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: clamp(2rem, 5vw, 3rem);
-      animation: fadeInUp 1s ease-out;
-      padding: 0 1rem;
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card:hover {
-      transform: translateY(-10px);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .card-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      color: var(--primary-color);
-      display: flex;
-      align-items: center;
-    }
-
-    .card-icon {
-      width: 24px;
-      height: 24px;
-      margin-right: 0.5rem;
-      fill: var(--primary-color);
-    }
-
-    .api-endpoint {
-      display: flex;
-      align-items: center;
-      background: var(--bg-light);
-      border-radius: 12px;
-      padding: 1rem;
-      margin: 1rem 0;
-      border-left: 4px solid var(--primary-color);
-      transition: all 0.2s ease;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      min-height: 60px;
-    }
-
-    .api-endpoint:hover {
-      background: #e2e8f0;
-      transform: translateX(5px);
-    }
-
-    .method-badge {
-      background: var(--primary-color);
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      margin-right: 1rem;
-      min-width: 60px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-
-    .endpoint-url {
-      font-family: 'Monaco', 'Menlo', monospace;
-      background: #f1f5f9;
-      padding: 0.25rem 0.5rem;
-      border-radius: 6px;
-      margin-right: 1rem;
-      flex: 1;
-      min-width: 150px;
-      word-break: break-all;
-      font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-    }
-
-    .try-button {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .try-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    }
-
-    .feature-list {
-      list-style: none;
-      padding: 0;
-    }
-
-    .feature-list li {
-      padding: 0.5rem 0;
-      color: var(--text-light);
-      display: flex;
-      align-items: center;
-    }
-
-    .feature-list li::before {
-      content: "✓";
-      color: #48bb78;
-      font-weight: bold;
-      margin-right: 0.5rem;
-      font-size: 1.2rem;
-    }
-
-    .tech-stack {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    .tech-badge {
-      background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 15px;
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 3rem;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      color: white;
-      animation: fadeInUp 1s ease-out;
-      animation-delay: 0.4s;
-      animation-fill-mode: both;
-    }
-
-    .github-link {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
-
-    .github-link:hover {
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    }
-
-    @media (max-width: 768px) {
-      .container { padding: 1rem; }
-      .logo { font-size: 2.5rem; }
-      .content-grid { grid-template-columns: 1fr; }
-      .api-endpoint { flex-direction: column; align-items: flex-start; }
-      .method-badge { margin-bottom: 0.5rem; }
-      .guide-grid { grid-template-columns: 1fr; }
-      .setup-steps { flex-direction: column; }
-      .step { margin-bottom: 2rem; }
-    }
-
-    /* ==============================================
-       RESPONSIVE DESIGN - DESIGN SYSTEM APPROACH
-       ============================================== */
-    
-    /* Mobile First - 480px and below */
-    @media (max-width: 480px) {
-      .container { 
-        padding: var(--spacing-2); /* 16px */
-        margin: 0;
-      }
-      
-      .header {
-        margin-bottom: var(--spacing-4); /* 32px */
-        padding: 0 var(--spacing-1); /* 8px */
-      }
-      
-      .logo { 
-        font-size: var(--font-size-3xl); /* 30px - readable */
-        line-height: var(--line-height-tight);
-      }
-      
-      .subtitle { 
-        font-size: var(--font-size-lg); /* 18px - accessible */
-        margin-bottom: var(--spacing-3);
-        padding: 0 var(--spacing-2);
-        line-height: var(--line-height-normal);
-      }
-      
-      .status-badge {
-        padding: var(--spacing-1) var(--spacing-2);
-        font-size: var(--font-size-sm);
-      }
-      
-      .content-grid {
-        gap: var(--spacing-3);
-        margin-bottom: var(--spacing-4);
-      }
-      
-      .card {
-        padding: var(--spacing-3);
-        border-radius: 12px;
-      }
-      
-      .card-title {
-        font-size: var(--font-size-xl); /* 20px */
-        margin-bottom: var(--spacing-2);
-      }
-      
-      .card-icon {
-        width: 20px;
-        height: 20px;
-      }
-      
-      .api-endpoint {
-        flex-direction: column;
-        align-items: stretch;
-        gap: var(--spacing-2);
-        padding: var(--spacing-2);
-      }
-      
-      .method-badge {
-        margin: 0;
-        text-align: center;
-        align-self: flex-start;
-        min-height: 32px; /* Readable touch target */
-      }
-      
-      .endpoint-url {
-        margin: 0;
-        font-size: var(--font-size-sm); /* 14px - readable */
-        overflow-x: auto;
-        white-space: nowrap;
-      }
-      
-      .try-button {
-        align-self: center;
-        padding: var(--spacing-2) var(--spacing-3);
-        min-height: 44px; /* Accessibility touch target */
-        min-width: 44px;
-      }
-      
-      .tech-stack {
-        gap: var(--spacing-1);
-      }
-      
-      .tech-badge {
-        font-size: var(--font-size-sm);
-        padding: var(--spacing-1);
-      }
-      
-      .feature-list li {
-        font-size: var(--font-size-base); /* 16px - readable */
-        padding: var(--spacing-1) 0;
-      }
-      
-      /* Developer Guide Mobile - Same alignment as main container */
-      .developer-guide {
-        margin-top: var(--spacing-4);
-        padding: 0 var(--spacing-2); /* Same as main container: 16px */
-        max-width: 100%;
-        box-sizing: border-box;
-      }
-      
-      .section-title {
-        font-size: var(--font-size-2xl); /* 24px */
-        margin-bottom: var(--spacing-4);
-        flex-direction: column;
-        gap: var(--spacing-1);
-        text-align: center;
-      }
-      
-      .section-icon {
-        width: 28px;
-        height: 28px;
-        margin: 0;
-      }
-      
-      .guide-card {
-        padding: var(--spacing-3);
-        border-radius: 12px;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-      }
-      
-      .guide-title {
-        font-size: var(--font-size-xl); /* 20px */
-        margin-bottom: var(--spacing-2);
-      }
-      
-      .code-example {
-        margin: var(--spacing-2) 0;
-        border-radius: 8px;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-      }
-      
-      .code-header {
-        padding: var(--spacing-2);
-        flex-direction: column;
-        gap: var(--spacing-1);
-        align-items: flex-start;
-      }
-      
-      .code-type {
-        font-size: var(--font-size-sm); /* 14px */
-      }
-      
-      /* Code stays readable with horizontal scroll */
-      pre {
-        padding: var(--spacing-2);
-        font-size: var(--font-size-xs); /* 12px - minimum readable */
-        line-height: var(--line-height-tight);
-        overflow-x: auto;
-        max-width: 100%;
-        white-space: pre; /* Preserve code formatting */
-      }
-      
-      .command-section {
-        margin-bottom: var(--spacing-3);
-        width: 100%;
-        max-width: 100%;
-      }
-      
-      .command-category {
-        font-size: var(--font-size-lg); /* 18px */
-        margin-bottom: var(--spacing-2);
-      }
-      
-      .command-item {
-        flex-direction: column;
-        align-items: stretch;
-        gap: var(--spacing-1);
-        padding: var(--spacing-2);
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-      }
-      
-      .command {
-        min-width: auto;
-        margin: 0;
-        font-size: var(--font-size-xs); /* 12px */
-        text-align: center;
-        overflow-x: auto;
-        max-width: 100%;
-        white-space: pre; /* Preserve command formatting */
-      }
-      
-      .command-desc {
-        margin: 0;
-        text-align: center;
-        font-size: var(--font-size-sm); /* 14px */
-        line-height: var(--line-height-normal);
-      }
-      
-      .copy-btn {
-        align-self: center;
-        padding: var(--spacing-2);
-        margin-top: var(--spacing-1);
-        min-height: 44px; /* Touch accessibility */
-        min-width: 44px;
-      }
-      
-      .setup-steps {
-        gap: var(--spacing-3);
-        width: 100%;
-        max-width: 100%;
-        flex-direction: column;
-      }
-      
-      .step {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--spacing-2);
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-      }
-      
-      .step-number {
-        align-self: center;
-        flex-shrink: 0;
-        min-height: 44px; /* Touch accessibility */
-        min-width: 44px;
-      }
-      
-      .step-content {
-        width: 100%;
-        max-width: 100%;
-      }
-      
-      .step-content h4 {
-        font-size: var(--font-size-lg); /* 18px */
-        margin-bottom: var(--spacing-2);
-      }
-      
-      .code-example.mini {
-        width: 100%;
-        max-width: 100%;
-      }
-      
-      .code-example.mini pre {
-        font-size: var(--font-size-xs); /* 12px */
-        padding: var(--spacing-2);
-        line-height: var(--line-height-tight);
-      }
-      }
-      
-      .step {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-      }
-      
-      .step-number {
-        align-self: center;
-        flex-shrink: 0;
-      }
-      
-      .step-content {
-        width: 100%;
-        max-width: 100%;
-      }
-      
-      .step-content h4 {
-        font-size: 1.1rem;
-        margin-bottom: 0.8rem;
-        word-wrap: break-word;
-      }
-      
-      .code-example.mini {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden;
-      }
-      
-      .code-example.mini pre {
-        font-size: 0.7rem;
-        padding: 0.6rem;
-        line-height: 1.3;
-      }
-      
-      .footer {
-        margin-top: 2rem;
-        padding: 1.5rem;
-        border-radius: 16px;
-        font-size: 0.9rem;
-      }
-      
-      .copy-feedback {
-        top: 10px;
-        right: 10px;
-        left: 10px;
-        padding: 0.6rem;
-        font-size: 0.9rem;
-        text-align: center;
-      }
-      
-      /* Space elements responsive */
-      .galaxy {
-        width: 200px;
-        height: 130px;
-        top: 5%;
-        right: 5%;
-      }
-      
-      .planet-1 {
-        width: 40px;
-        height: 40px;
-        top: 15%;
-        left: 10%;
-      }
-      
-      .planet-2 {
-        width: 30px;
-        height: 30px;
-        bottom: 20%;
-        left: 20%;
-      }
-      
-      .planet-3 {
-        width: 50px;
-        height: 50px;
-        top: 50%;
-        right: 15%;
-      }
-      
-      .planet-4 {
-        width: 25px;
-        height: 25px;
-        top: 10%;
-        right: 30%;
-      }
-
-    /* Extra small mobile screens */
-    @media (max-width: 320px) {
-      .container {
-        padding: 0.25rem;
-      }
-      
-      .main-title {
-        font-size: clamp(1.4rem, 6vw, 1.8rem);
-      }
-      
-      .subtitle {
-        font-size: clamp(0.75rem, 3.5vw, 0.9rem);
-      }
-      
-      .api-grid {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-      }
-      
-      .developer-guide {
-        padding: 0 var(--spacing-1); /* Same pattern as main container responsive */
-        margin-top: 1.5rem;
-        max-width: 100%;
-        box-sizing: border-box;
-      }
-      
-      .guide-card {
-        padding: 0.75rem;
-        border-radius: 12px;
-      }
-      
-      .guide-title {
-        font-size: 1rem;
-        margin-bottom: 0.75rem;
-      }
-      
-      .section-title {
-        font-size: 1.3rem;
-        margin-bottom: 1.5rem;
-      }
-      
-      pre {
-        font-size: 0.6rem;
-        padding: 0.5rem;
-        word-break: break-all;
-        white-space: pre-wrap;
-        overflow-x: hidden;
-      }
-      
-      .command {
-        font-size: 0.6rem;
-        word-break: break-all;
-        overflow-wrap: break-word;
-      }
-      
-      .command-desc {
-        font-size: 0.7rem;
-        line-height: 1.2;
-      }
-      
-      .code-type {
-        font-size: 0.7rem;
-      }
-      
-      .command-category {
-        font-size: 0.9rem;
-        margin-bottom: 0.6rem;
-      }
-      
-      .step-content h4 {
-        font-size: 0.95rem;
-        margin-bottom: 0.6rem;
-      }
-      
-      .code-example.mini pre {
-        font-size: 0.55rem;
-        padding: 0.4rem;
-      }
-    }
-
-    /* Tablet Portrait */
-    @media (min-width: 481px) and (max-width: 768px) {
-      .container { 
-        padding: var(--spacing-3); /* 24px */
-      }
-      
-      .logo { 
-        font-size: var(--font-size-4xl); /* 36px */
-      }
-      
-      .subtitle { 
-        font-size: var(--font-size-xl); /* 20px */
-      }
-      
-      .content-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-4); /* 32px */
-      }
-      
-      .guide-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-3); /* 24px */
-      }
-      
-      .setup-steps {
-        flex-direction: column;
-        gap: var(--spacing-4); /* 32px */
-      }
-      
-      .developer-guide {
-        padding: 0 var(--spacing-3); /* Same as main container: 24px */
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-      }
-      
-      .guide-card {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        padding: var(--spacing-4); /* 32px */
-      }
-      
-      .code-example {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        margin: var(--spacing-3) 0; /* 24px */
-      }
-      
-      pre {
-        font-size: var(--font-size-sm); /* 14px */
-        overflow-x: auto;
-        max-width: 100%;
-        white-space: pre;
-        padding: var(--spacing-3); /* 24px */
-      }
-      
-      .command {
-        font-size: var(--font-size-sm); /* 14px */
-        max-width: 100%;
-        white-space: pre;
-        overflow-x: auto;
-      }
-      
-      /* Touch targets for tablet */
-      .try-button, .copy-btn {
-        min-height: 44px;
-        min-width: 44px;
-        padding: var(--spacing-2) var(--spacing-3);
-      }
-      
-      .step {
-        flex-direction: row;
-        align-items: flex-start;
-      }
-      
-      .api-endpoint {
-        flex-direction: row;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-      
-      .method-badge {
-        margin: 0;
-      }
-      
-      .endpoint-url {
-        flex: 1;
-        min-width: 200px;
-      }
-      
-      .command-item {
-        flex-direction: row;
-        align-items: center;
-      }
-      
-      .command {
-        min-width: 140px;
-        margin-right: 1rem;
-      }
-      
-      .command-desc {
-        margin-right: 1rem;
-      }
-    }
-
-    /* Tablet Landscape / Small Desktop */
-    @media (min-width: 769px) and (max-width: 1024px) {
-      .container { 
-        padding: 2rem; 
-        max-width: 1000px;
-      }
-      
-      .content-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-      }
-      
-      .guide-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-      
-      .setup-steps {
-        flex-direction: row;
-        gap: 1.5rem;
-      }
-      
-      .card {
-        padding: 1.8rem;
-      }
-      
-      .guide-card {
-        padding: 1.8rem;
-      }
-      
-      /* Developer Guide alignment consistency */
-      .developer-guide {
-        padding: 0 2rem; /* Same as main container */
-        max-width: 1000px;
-      }
-    }
-
-    /* Large Desktop */
-    @media (min-width: 1025px) and (max-width: 1440px) {
-      .container { 
-        max-width: 1200px;
-        padding: 2rem;
-      }
-      
-      .content-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
-      }
-      
-      .guide-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
-      }
-      
-      /* Developer Guide alignment consistency */
-      .developer-guide {
-        padding: 0 2rem; /* Same as main container */
-        max-width: 1200px;
-      }
-    }
-
-    /* Extra Large Desktop */
-    @media (min-width: 1441px) {
-      .container { 
-        max-width: 1400px;
-        padding: 3rem;
-      }
-      
-      .content-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2.5rem;
-      }
-      
-      .guide-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2.5rem;
-      }
-      
-      .logo {
-        font-size: 3.5rem;
-      }
-      
-      .subtitle {
-        font-size: 1.3rem;
-      }
-      
-      /* Developer Guide alignment consistency */
-      .developer-guide {
-        padding: 0 3rem; /* Same as main container */
-        max-width: 1400px;
-      }
-    }
-
-    /* Landscape orientation specific */
-    @media (max-height: 500px) and (orientation: landscape) {
-      .header {
-        margin-bottom: 1.5rem;
-      }
-      
-      .logo {
-        font-size: 2rem;
-      }
-      
-      .subtitle {
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-      }
-      
-      .content-grid {
-        margin-bottom: 1.5rem;
-      }
-      
-      .card {
-        padding: 1.2rem;
-      }
-      
-      .developer-guide {
-        margin-top: 1.5rem;
-      }
-      
-      .section-title {
-        font-size: 1.8rem;
-        margin-bottom: 1.5rem;
-      }
-      
-      .galaxy {
-        width: 150px;
-        height: 100px;
-      }
-      
-      .planet-1, .planet-2, .planet-3, .planet-4 {
-        transform: scale(0.7);
-      }
-    }
-
-    /* High DPI displays */
-    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-      .star {
-        transform: scale(0.8);
-      }
-      
-      .particle {
-        width: 1.5px;
-        height: 1.5px;
-      }
-    }
-
-    /* Print styles */
-    @media print {
-      .space-background,
-      .nebula,
-      .stars,
-      .galaxy,
-      .planet,
-      .floating-particles,
-      .shooting-star {
-        display: none !important;
-      }
-      
-      body {
-        background: white !important;
-        color: black !important;
-      }
-      
-      .card, .guide-card {
-        background: white !important;
-        border: 1px solid #ccc !important;
-        box-shadow: none !important;
-        break-inside: avoid;
-      }
-      
-      .try-button {
-        border: 1px solid #333 !important;
-        color: black !important;
-        background: white !important;
-      }
-    }
-
-    /* Accessibility improvements */
-    @media (prefers-reduced-motion: reduce) {
-      * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-      
-      .floating-particles,
-      .stars,
-      .shooting-star {
-        display: none;
-      }
-    }
-
-    /* High contrast mode */
-    @media (prefers-contrast: high) {
-      .card, .guide-card {
-        border: 2px solid #333 !important;
-        background: rgba(255, 255, 255, 1) !important;
-      }
-      
-      .status-badge {
-        border: 2px solid white !important;
-      }
-      
-      .try-button {
-        border: 2px solid white !important;
-      }
-    }
-
-    /* Developer Guide Styles - Aligned with main container */
-    .developer-guide {
-      max-width: 1200px;
-      margin: 4rem auto 0;
-      padding: 0 var(--spacing-4); /* Same as main container: 32px */
-      width: 100%;
-      box-sizing: border-box;
-      position: relative;
-      z-index: 1;
-    }
-
-    .section-title {
-      font-size: 2.5rem;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 3rem;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: fadeInUp 1s ease-out;
-    }
-
-    .section-icon {
-      width: 32px;
-      height: 32px;
-      margin-right: 1rem;
-      fill: var(--accent-color);
-    }
-
-    .guide-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin-bottom: 2rem;
-    }
-
-    .guide-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      padding: 2rem;
-      box-shadow: var(--shadow);
-      transition: all 0.3s ease;
-      animation: fadeInUp 1s ease-out;
-      animation-delay: 0.3s;
-      animation-fill-mode: both;
-    }
-
-    .guide-card.full-width {
-      grid-column: 1 / -1;
-    }
-
-    .guide-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .guide-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      color: var(--primary-color);
-      text-align: center;
-    }
-
-    .code-example {
-      background: #1a1a1a;
-      border-radius: 12px;
-      margin: 1rem 0;
-      overflow: hidden;
-      border: 1px solid #333;
-    }
-
-    .code-example.mini {
-      position: relative;
-    }
-
-    .code-header {
-      background: #2d2d2d;
-      padding: 0.75rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #333;
-    }
-
-    .code-type {
-      color: var(--accent-color);
-      font-weight: 500;
-      font-size: 0.875rem;
-    }
-
-    .copy-btn {
-      background: transparent;
-      border: none;
-      color: #888;
-      cursor: pointer;
-      padding: 0.25rem;
-      border-radius: 4px;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-    }
-
-    .copy-btn:hover {
-      color: var(--accent-color);
-      background: rgba(240, 147, 251, 0.1);
-    }
-
-    /* Code blocks - legible and accessible */
-    pre {
-      margin: 0;
-      padding: var(--spacing-2); /* 16px */
-      color: var(--text-color); /* High contrast */
-      background: var(--bg-code); /* Dark background for contrast */
-      border: 1px solid var(--border-color);
-      font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Menlo', monospace;
-      font-size: var(--font-size-sm); /* 14px - readable for code */
-      line-height: var(--line-height-tight); /* 1.25 */
-      overflow-x: auto; /* Horizontal scroll instead of breaking */
-      white-space: pre; /* Preserve code formatting */
-      max-width: 100%;
-      border-radius: 6px;
-      /* Smooth scrolling */
-      scroll-behavior: smooth;
-      scrollbar-width: thin;
-      scrollbar-color: var(--accent-color) var(--bg-code);
-    }
-    
-    /* Custom scrollbar for webkit browsers */
-    pre::-webkit-scrollbar {
-      height: 6px;
-    }
-    
-    pre::-webkit-scrollbar-track {
-      background: var(--bg-code);
-      border-radius: 3px;
-    }
-    
-    pre::-webkit-scrollbar-thumb {
-      background: var(--accent-color);
-      border-radius: 3px;
-    }
-    
-    pre::-webkit-scrollbar-thumb:hover {
-      background: var(--accent-hover);
-    }
-    
-    /* Cards with high contrast and better visibility */
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-primary);
-      color: var(--text-primary);
-      border-radius: 12px;
-      padding: var(--spacing-4);
-      box-shadow: var(--shadow);
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-    }
-    
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-hover);
-      border-color: var(--accent-color);
-    }
-    
-    .guide-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-primary);
-      color: var(--text-primary);
-      border-radius: 12px;
-      padding: var(--spacing-4);
-      backdrop-filter: blur(10px);
-    }
-    
-    /* Typography improvements */
-    .card-title {
-      font-size: var(--font-size-xl);
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: var(--spacing-2);
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
-    }
-    
-    .guide-title {
-      font-size: var(--font-size-xl);
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: var(--spacing-2);
-    }
-    
-    /* Feature lists */
-    .feature-list {
-      list-style: none;
-      padding: 0;
-    }
-    
-    .feature-list li {
-      color: var(--text-secondary);
-      font-size: var(--font-size-base);
-      padding: var(--spacing-1) 0;
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
-    }
-    
-    .feature-list li::before {
-      content: "✓";
-      color: var(--success-color);
-      font-weight: bold;
-      font-size: var(--font-size-lg);
-    }
-    
-    .code-example {
-      background: var(--bg-code);
-      border: 1px solid var(--border-primary);
-      border-radius: 8px;
-      overflow: hidden;
-      margin: var(--spacing-2) 0;
-    }
-    
-    .code-header {
-      background: var(--bg-secondary);
-      padding: var(--spacing-2);
-      border-bottom: 1px solid var(--border-primary);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    
-    .code-type {
-      color: var(--text-secondary);
-      font-size: var(--font-size-sm);
-      font-weight: 500;
-    }
-    
-    /* Command sections */
-    .command-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border-primary);
-      border-radius: 8px;
-      padding: var(--spacing-3);
-      margin: var(--spacing-2) 0;
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-3);
-    }
-    
-    .command {
-      background: var(--bg-code);
-      color: var(--text-primary);
-      padding: var(--spacing-1) var(--spacing-2);
-      border-radius: 4px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: var(--font-size-sm);
-      border: 1px solid var(--border-primary);
-      flex: 1;
-    }
-    
-    .command-desc {
-      color: var(--text-secondary);
-      font-size: var(--font-size-base);
-      flex: 2;
-    }
-    
-    .command-category {
-      color: var(--text-primary);
-      font-size: var(--font-size-lg);
-      font-weight: 600;
-      margin-bottom: var(--spacing-2);
-      border-bottom: 2px solid var(--accent-color);
-      padding-bottom: var(--spacing-1);
-    }
-
-    .command-section {
-      margin-bottom: 2rem;
-    }
-
-    .command-category {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--secondary-color);
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-    }
-
-    .command-item {
-      display: flex;
-      align-items: center;
-      background: var(--bg-light);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      margin: 0.5rem 0;
-      border-left: 3px solid var(--primary-color);
-      transition: all 0.2s ease;
-    }
-
-    .command-item:hover {
-      background: #e2e8f0;
-      transform: translateX(3px);
-    }
-
-    .command {
-      background: #f1f5f9;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-family: 'Monaco', 'Menlo', monospace;
-      font-size: 0.875rem;
-      color: var(--primary-color);
-      font-weight: 500;
-      margin-right: 1rem;
-      min-width: 150px;
-    }
-
-    .command-desc {
-      flex: 1;
-      color: var(--text-light);
-      margin-right: 1rem;
-    }
-
-    .setup-steps {
-      display: flex;
-      gap: 2rem;
-      align-items: flex-start;
-    }
-
-    .step {
-      flex: 1;
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .step-number {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 1.2rem;
-      flex-shrink: 0;
-    }
-
-    .step-content h4 {
-      color: var(--primary-color);
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-
-    .copy-feedback {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-      transform: translateY(-100px);
-      opacity: 0;
-      transition: all 0.3s ease;
-      z-index: 1000;
-    }
-
-    .copy-feedback.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    /* Additional UX improvements */
-    .tech-stack {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--spacing-1);
-      margin: var(--spacing-2) 0;
-    }
-    
-    .tech-badge {
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      padding: var(--spacing-1) var(--spacing-2);
-      border-radius: 16px;
-      font-size: var(--font-size-sm);
-      font-weight: 500;
-      border: 1px solid var(--border-primary);
-    }
-    
-    /* General text readability */
-    p {
-      color: var(--text-secondary);
-      line-height: var(--line-height-normal);
-      margin-bottom: var(--spacing-2);
-    }
-    
-    h1, h2, h3, h4, h5, h6 {
-      color: var(--text-primary);
-      font-weight: 600;
-      line-height: var(--line-height-tight);
-      margin-bottom: var(--spacing-2);
-    }
-    
-    /* Links */
-    a {
-      color: var(--accent-color);
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-    
-    a:hover {
-      color: var(--accent-hover);
-      text-decoration: underline;
-    }
-    
-    /* Ensure all text is visible */
-    * {
-      color: inherit;
-    }
-    
-    /* Force visibility for any remaining elements */
-    .hidden-text {
-      color: var(--text-primary) !important;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Skeleton API - Explore the Universe</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="space-background"></div>
-  <div class="nebula"></div>
-  <div class="stars" id="stars"></div>
-  <div class="galaxy"></div>
-  <div class="planet planet-1"></div>
-  <div class="planet planet-2"></div>
-  <div class="planet planet-3"></div>
-  <div class="planet planet-4"></div>
-  <div class="floating-particles" id="particles"></div>
-  
-  <div class="container">
-    <header class="header">
-      <h1 class="logo">Skeleton App</h1>
-      <p class="subtitle">Estrutura base minimalista para projetos Node.js + Express</p>
-      <div class="status-badge">
-        <div class="status-dot"></div>
-        API Online
-      </div>
-    </header>
-
-    <div class="content-grid">
-      <!-- API Endpoints Card -->
-      <div class="card">
-        <h2 class="card-title">
-          <svg class="card-icon" viewBox="0 0 24 24">
-            <path d="M8.5 12l1.5 1.5L14.5 9l1.5 1.5L10.5 16L7 12.5z"/>
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
-          </svg>
-          API Endpoints
-        </h2>
-        
-        <div class="api-endpoint">
-          <span class="method-badge">GET</span>
-          <code class="endpoint-url">/api/health</code>
-          <a href="/api/health" class="try-button" target="_blank">Try It</a>
+    <!-- Space Background -->
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="planets">
+            <div class="planet planet-1"></div>
+            <div class="planet planet-2"></div>
+            <div class="planet planet-3"></div>
         </div>
-        
-        <p style="color: var(--text-light); margin-top: 1rem;">
-          Endpoint de status da aplicação que retorna informações sobre saúde do serviço,
-          timestamp e contadores de exemplo.
-        </p>
-      </div>
-
-      <!-- Architecture Card -->
-      <div class="card">
-        <h2 class="card-title">
-          <svg class="card-icon" viewBox="0 0 24 24">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-          Arquitetura
-        </h2>
-        
-        <ul class="feature-list">
-          <li><strong>Model:</strong> Camada de dados (in-memory)</li>
-          <li><strong>Service:</strong> Regras de negócio</li>
-          <li><strong>Controller:</strong> Orquestração HTTP</li>
-          <li><strong>Routes:</strong> Definição de endpoints</li>
-          <li><strong>Tests:</strong> Unit, Integration, E2E</li>
-        </ul>
-      </div>
-
-      <!-- Tech Stack Card -->
-      <div class="card">
-        <h2 class="card-title">
-          <svg class="card-icon" viewBox="0 0 24 24">
-            <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
-          </svg>
-          Stack Tecnológica
-        </h2>
-        
-        <div class="tech-stack">
-          <span class="tech-badge">Node.js 18+</span>
-          <span class="tech-badge">Express.js</span>
-          <span class="tech-badge">Jest</span>
-          <span class="tech-badge">Supertest</span>
-          <span class="tech-badge">ESLint 9+</span>
-          <span class="tech-badge">Netlify</span>
-          <span class="tech-badge">GitHub Actions</span>
+        <div class="galaxies">
+            <div class="galaxy galaxy-1"></div>
+            <div class="galaxy galaxy-2"></div>
         </div>
-        
-        <ul class="feature-list" style="margin-top: 1.5rem;">
-          <li>Middlewares de segurança (Helmet, CORS)</li>
-          <li>Testes automatizados em 3 camadas</li>
-          <li>CI/CD com deploy automático</li>
-          <li>Linting com regras Jest específicas</li>
-        </ul>
-      </div>
-
-      <!-- Documentation Card -->
-      <div class="card">
-        <h2 class="card-title">
-          <svg class="card-icon" viewBox="0 0 24 24">
-            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
-          </svg>
-          Documentação
-        </h2>
-        
-        <ul class="feature-list">
-          <li><strong>README.md:</strong> Documentação completa</li>
-          <li><strong>Copilot Instructions:</strong> Guia para AI agents</li>
-          <li><strong>ESLint Config:</strong> Flat config format</li>
-          <li><strong>Testing Guide:</strong> Padrões e exemplos</li>
-          <li><strong>CI/CD Setup:</strong> GitHub Actions workflow</li>
-        </ul>
-        
-        <div style="margin-top: 1.5rem;">
-          <a href="https://github.com/ebersonra/skeleton" class="try-button" target="_blank">
-            Ver no GitHub
-          </a>
-        </div>
-      </div>
+        <div class="nebula"></div>
     </div>
 
-    <!-- Developer Guide Section -->
-    <div class="developer-guide">
-      <h2 class="section-title">
-        <svg class="section-icon" viewBox="0 0 24 24">
-          <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
-        </svg>
-        Guia do Desenvolvedor
-      </h2>
-      
-      <div class="guide-grid">
-        <!-- Testing Examples -->
-        <div class="guide-card">
-          <h3 class="guide-title">
-            🧪 Exemplos de Testes
-          </h3>
-          
-          <div class="code-example">
-            <div class="code-header">
-              <span class="code-type">Unit Test</span>
-              <button class="copy-btn" onclick="copyCode('unit-test')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                </svg>
-              </button>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="brand-icon">🚀</span>
+                <span class="brand-text">Skeleton API</span>
             </div>
-            <pre id="unit-test"><code>// src/tests/unit/exampleService.test.js
-const exampleService = require('../../services/exampleService');
-
-describe('exampleService', () => {
-  test('should return service info', () => {
-    const result = exampleService.getInfo();
-    expect(result).toBeDefined();
-    expect(result.status).toBe('OK');
-    expect(result.version).toBe('1.0.0');
-  });
-});</code></pre>
-          </div>
-
-          <div class="code-example">
-            <div class="code-header">
-              <span class="code-type">Integration Test</span>
-              <button class="copy-btn" onclick="copyCode('integration-test')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                </svg>
-              </button>
+            <div class="nav-links">
+                <a href="#apis" class="nav-link">APIs</a>
+                <a href="#docs" class="nav-link">Documentação</a>
+                <a href="#testing" class="nav-link">Testes</a>
+                <a href="https://github.com/ebersonra/skeleton" class="nav-link external" target="_blank">
+                    GitHub
+                    <span class="external-icon">↗</span>
+                </a>
             </div>
-            <pre id="integration-test"><code>// src/tests/integration/health.integration.test.js
-const healthController = require('../../controllers/healthController');
-const ExampleModel = require('../../models/exampleModel');
-
-const mockResponse = () => ({
-  json: jest.fn().mockReturnThis(),
-  status: jest.fn().mockReturnThis()
-});
-
-test('should integrate controller -> service -> model', () => {
-  const req = {};
-  const res = mockResponse();
-  const originalCount = ExampleModel.count;
-  ExampleModel.count = jest.fn().mockReturnValue(5);
-
-  healthController(req, res);
-
-  expect(ExampleModel.count).toHaveBeenCalled();
-  expect(res.json).toHaveBeenCalledWith(
-    expect.objectContaining({
-      status: 'OK',
-      exampleCount: 5
-    })
-  );
-  
-  ExampleModel.count = originalCount;
-});</code></pre>
-          </div>
-
-          <div class="code-example">
-            <div class="code-header">
-              <span class="code-type">E2E Test</span>
-              <button class="copy-btn" onclick="copyCode('e2e-test')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                </svg>
-              </button>
-            </div>
-            <pre id="e2e-test"><code>// src/tests/e2e/api.test.js
-const request = require('supertest');
-const Server = require('../../server');
-
-describe('E2E Tests - API Endpoints', () => {
-  let app, server;
-
-  beforeAll(() => {
-    server = new Server();
-    app = server.app;
-  });
-
-  test('should return health status', async () => {
-    const response = await request(app)
-      .get('/api/health')
-      .expect(200);
-
-    expect(response.body).toHaveProperty('status');
-    expect(response.body.status).toBe('OK');
-  });
-});</code></pre>
-          </div>
         </div>
+    </nav>
 
-        <!-- ESLint & Commands -->
-        <div class="guide-card">
-          <h3 class="guide-title">
-            ⚡ Comandos Essenciais
-          </h3>
-          
-          <div class="command-section">
-            <h4 class="command-category">🧪 Testes</h4>
-            <div class="command-item">
-              <code class="command">npm test</code>
-              <span class="command-desc">Executa todos os testes</span>
-              <button class="copy-btn" onclick="copyCommand('npm test')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                </svg>
-              </button>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="title-main">Explore o</span>
+                    <span class="title-accent">Universo</span>
+                    <span class="title-main">das APIs</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Uma estrutura minimalista Node.js + Express com arquitetura em camadas,
+                    testes automatizados e CI/CD. Pronto para lançar seus projetos ao espaço.
+                </p>
+                <div class="hero-actions">
+                    <a href="#apis" class="btn btn-primary">
+                        <span class="btn-icon">🌟</span>
+                        Explorar APIs
+                    </a>
+                    <a href="/api/health" class="btn btn-secondary" target="_blank">
+                        <span class="btn-icon">💓</span>
+                        Health Check
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- APIs Section -->
+    <section id="apis" class="apis-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">🛰️ APIs Disponíveis</h2>
+                <p class="section-subtitle">Endpoints prontos para uso em produção</p>
             </div>
             
-            <div class="command-item">
-              <code class="command">npm run test:unit</code>
-              <span class="command-desc">Apenas testes unitários</span>
-              <button class="copy-btn" onclick="copyCommand('npm run test:unit')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                </svg>
-              </button>
+            <div class="api-grid">
+                <div class="api-card">
+                    <div class="api-header">
+                        <div class="api-method get">GET</div>
+                        <div class="api-status active">ATIVO</div>
+                    </div>
+                    <h3 class="api-title">/api/health</h3>
+                    <p class="api-description">
+                        Endpoint de monitoramento que retorna o status da aplicação,
+                        timestamp e informações de versão.
+                    </p>
+                    <div class="api-response">
+                        <h4>Resposta:</h4>
+                        <pre><code>{
+  "status": "healthy",
+  "timestamp": "2025-09-14T...",
+  "message": "Service is running",
+  "version": "1.0.0"
+}</code></pre>
+                    </div>
+                    <div class="api-actions">
+                        <a href="/api/health" class="btn btn-outline" target="_blank">
+                            Testar Endpoint
+                        </a>
+                        <button class="btn btn-ghost copy-btn" data-copy="curl -X GET http://localhost:4000/api/health">
+                            Copiar cURL
+                        </button>
+                    </div>
+                </div>
             </div>
-
-            <div class="command-item">
-              <code class="command">npm run test:e2e</code>
-              <span class="command-desc">Testes end-to-end</span>
-              <button class="copy-btn" onclick="copyCommand('npm run test:e2e')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                </svg>
-              </button>
-            </div>
-
-            <div class="command-item">
-              <code class="command">npm run test:watch</code>
-              <span class="command-desc">Modo watch para desenvolvimento</span>
-              <button class="copy-btn" onclick="copyCommand('npm run test:watch')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="command-section">
-            <h4 class="command-category">🔍 Qualidade de Código</h4>
-            <div class="command-item">
-              <code class="command">npx eslint .</code>
-              <span class="command-desc">Análise de código completa</span>
-              <button class="copy-btn" onclick="copyCommand('npx eslint .')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                </svg>
-              </button>
-            </div>
-
-            <div class="command-item">
-              <code class="command">npx eslint --fix .</code>
-              <span class="command-desc">Corrige problemas automaticamente</span>
-              <button class="copy-btn" onclick="copyCommand('npx eslint --fix .')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="command-section">
-            <h4 class="command-category">🚀 Desenvolvimento</h4>
-            <div class="command-item">
-              <code class="command">npm start</code>
-              <span class="command-desc">Inicia servidor (porta 4000)</span>
-              <button class="copy-btn" onclick="copyCommand('npm start')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                </svg>
-              </button>
-            </div>
-
-            <div class="command-item">
-              <code class="command">netlify dev</code>
-              <span class="command-desc">Preview local com Netlify (porta 8888)</span>
-              <button class="copy-btn" onclick="copyCommand('netlify dev')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
         </div>
+    </section>
 
-        <!-- Quick Setup -->
-        <div class="guide-card full-width">
-          <h3 class="guide-title">
-            ⚡ Setup Rápido
-          </h3>
-          
-          <div class="setup-steps">
-            <div class="step">
-              <div class="step-number">1</div>
-              <div class="step-content">
-                <h4>Clone & Install</h4>
-                <div class="code-example mini">
-            <pre id="setup-clone"><code>git clone https://github.com/ebersonra/skeleton.git
-cd skeleton
-npm install</code></pre>
-                  <button class="copy-btn" onclick="copyCode('setup-clone')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
+    <!-- Documentation Section -->
+    <section id="docs" class="docs-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">📚 Como Executar</h2>
+                <p class="section-subtitle">Guia completo para começar</p>
             </div>
 
-            <div class="step">
-              <div class="step-number">2</div>
-              <div class="step-content">
-                <h4>Configurar Ambiente</h4>
-                <div class="code-example mini">
-                  <pre id="setup-env"><code># Criar arquivo .env
-PORT=4000
-CORS_ORIGIN=http://localhost:8888</code></pre>
-                  <button class="copy-btn" onclick="copyCode('setup-env')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
+            <div class="docs-grid">
+                <div class="doc-card">
+                    <div class="doc-icon">⚡</div>
+                    <h3>Início Rápido</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Terminal</span>
+                            <button class="copy-btn" data-copy="npm install && npm start">Copiar</button>
+                        </div>
+                        <pre><code># Instalar dependências
+npm install
 
-            <div class="step">
-              <div class="step-number">3</div>
-              <div class="step-content">
-                <h4>Rodar & Testar</h4>
-                <div class="code-example mini">
-                  <pre id="setup-run"><code>npm start        # Servidor
-npm test         # Testes
-npx eslint .     # Lint</code></pre>
-                  <button class="copy-btn" onclick="copyCode('setup-run')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                    </svg>
-                  </button>
+# Iniciar servidor (porta 4000)
+npm start
+
+# Verificar saúde da API
+curl http://localhost:4000/api/health</code></pre>
+                    </div>
                 </div>
-              </div>
+
+                <div class="doc-card">
+                    <div class="doc-icon">🧪</div>
+                    <h3>Executar Testes</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Scripts NPM</span>
+                            <button class="copy-btn" data-copy="npm run test">Copiar</button>
+                        </div>
+                        <pre><code># Todos os testes
+npm test
+
+# Testes específicos
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+
+# Modo watch
+npm run test:watch</code></pre>
+                    </div>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-icon">🚀</div>
+                    <h3>Deploy</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Netlify</span>
+                            <button class="copy-btn" data-copy="netlify dev">Copiar</button>
+                        </div>
+                        <pre><code># Preview local (porta 8888)
+netlify dev
+
+# Deploy automático via CI/CD
+# Atualizar versão no package.json
+# Push para main branch</code></pre>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
+    </section>
 
+    <!-- Architecture Section -->
+    <section id="testing" class="architecture-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">🏗️ Arquitetura & Testes</h2>
+                <p class="section-subtitle">Estrutura sólida e testável</p>
+            </div>
+
+            <div class="arch-grid">
+                <div class="arch-card">
+                    <h3>📁 Estrutura de Camadas</h3>
+                    <div class="layer-diagram">
+                        <div class="layer">
+                            <span class="layer-name">Routes</span>
+                            <span class="layer-desc">Endpoints HTTP</span>
+                        </div>
+                        <div class="layer">
+                            <span class="layer-name">Controllers</span>
+                            <span class="layer-desc">Orquestração</span>
+                        </div>
+                        <div class="layer">
+                            <span class="layer-name">Services</span>
+                            <span class="layer-desc">Lógica de Negócio</span>
+                        </div>
+                        <div class="layer">
+                            <span class="layer-name">Models</span>
+                            <span class="layer-desc">Acesso a Dados</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arch-card">
+                    <h3>🧪 Estratégia de Testes</h3>
+                    <div class="test-types">
+                        <div class="test-type">
+                            <div class="test-icon unit">U</div>
+                            <div class="test-info">
+                                <h4>Unit Tests</h4>
+                                <p>Funções isoladas</p>
+                            </div>
+                        </div>
+                        <div class="test-type">
+                            <div class="test-icon integration">I</div>
+                            <div class="test-info">
+                                <h4>Integration</h4>
+                                <p>Fluxo entre camadas</p>
+                            </div>
+                        </div>
+                        <div class="test-type">
+                            <div class="test-icon e2e">E</div>
+                            <div class="test-info">
+                                <h4>E2E Tests</h4>
+                                <p>Sistema completo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arch-card">
+                    <h3>⚙️ Stack Tecnológica</h3>
+                    <div class="tech-stack">
+                        <div class="tech-item">
+                            <span class="tech-icon">🟢</span>
+                            <span>Node.js 18+</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">⚡</span>
+                            <span>Express.js</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🃏</span>
+                            <span>Jest + Supertest</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🔧</span>
+                            <span>ESLint 9+</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🌐</span>
+                            <span>Netlify</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🔄</span>
+                            <span>GitHub Actions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="footer">
-      <p>
-        Desenvolvido com ❤️ usando Node.js + Express<br>
-        <a href="https://github.com/ebersonra/skeleton" class="github-link" target="_blank">
-          🔗 Repositório no GitHub
-        </a>
-      </p>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="brand-icon">🚀</span>
+                    <span>Skeleton API</span>
+                </div>
+                <p class="footer-text">
+                    Uma base sólida para explorar o universo do desenvolvimento Node.js
+                </p>
+                <div class="footer-links">
+                    <a href="https://github.com/ebersonra/skeleton" target="_blank" class="footer-link">
+                        GitHub Repository
+                    </a>
+                    <a href="/api/health" target="_blank" class="footer-link">
+                        Health Check
+                    </a>
+                </div>
+            </div>
+        </div>
     </footer>
-  </div>
 
-  <script>
-    // Create stars
-    function createStars() {
-      const starsContainer = document.getElementById('stars');
-      const starCount = 200;
-      
-      for (let i = 0; i < starCount; i++) {
-        const star = document.createElement('div');
-        const size = Math.random();
-        
-        if (size < 0.7) {
-          star.className = 'star small';
-        } else if (size < 0.9) {
-          star.className = 'star medium';
-        } else {
-          star.className = 'star large';
-        }
-        
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.animationDelay = Math.random() * 3 + 's';
-        star.style.animationDuration = (2 + Math.random() * 4) + 's';
-        
-        starsContainer.appendChild(star);
-      }
-    }
-
-    // Create shooting stars
-    function createShootingStars() {
-      const shootingStar = document.createElement('div');
-      shootingStar.className = 'shooting-star';
-      shootingStar.style.top = Math.random() * 50 + '%';
-      shootingStar.style.left = Math.random() * 50 + '%';
-      shootingStar.style.animationDelay = Math.random() * 2 + 's';
-      
-      document.body.appendChild(shootingStar);
-      
-      setTimeout(() => {
-        shootingStar.remove();
-      }, 3000);
-    }
-
-    // Create floating particles
-    function createParticles() {
-      const container = document.getElementById('particles');
-      const particleCount = 30;
-      
-      for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 25 + 's';
-        particle.style.animationDuration = (20 + Math.random() * 10) + 's';
-        container.appendChild(particle);
-      }
-    }
-
-    // Smooth scrolling for any future anchor links
-    document.addEventListener('DOMContentLoaded', function() {
-      createStars();
-      createParticles();
-      
-      // Create shooting stars periodically
-      setInterval(createShootingStars, 5000);
-      
-      // Add stagger animation to cards
-      const cards = document.querySelectorAll('.card');
-      cards.forEach((card, index) => {
-        card.style.animationDelay = (index * 0.1) + 's';
-      });
-    });
-
-    // Copy functionality
-    function copyCode(elementId) {
-      const element = document.getElementById(elementId);
-      const text = element.textContent;
-      copyToClipboard(text);
-    }
-
-    function copyCommand(command) {
-      copyToClipboard(command);
-    }
-
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        showCopyFeedback();
-      }).catch(() => {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        showCopyFeedback();
-      });
-    }
-
-    function showCopyFeedback() {
-      let feedback = document.querySelector('.copy-feedback');
-      if (!feedback) {
-        feedback = document.createElement('div');
-        feedback.className = 'copy-feedback';
-        feedback.innerHTML = '✓ Copiado para a área de transferência!';
-        document.body.appendChild(feedback);
-      }
-      
-      feedback.classList.add('show');
-      setTimeout(() => {
-        feedback.classList.remove('show');
-      }, 2000);
-    }
-
-    // Add click effect to try buttons
-    document.querySelectorAll('.try-button').forEach(button => {
-      button.addEventListener('click', function(e) {
-        const ripple = document.createElement('span');
-        const rect = this.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e.clientX - rect.left - size / 2;
-        const y = e.clientY - rect.top - size / 2;
-        
-        ripple.style.cssText = `
-          position: absolute;
-          width: ${size}px;
-          height: ${size}px;
-          left: ${x}px;
-          top: ${y}px;
-          background: rgba(255, 255, 255, 0.3);
-          border-radius: 50%;
-          transform: scale(0);
-          animation: ripple 0.6s linear;
-          pointer-events: none;
-        `;
-        
-        this.style.position = 'relative';
-        this.style.overflow = 'hidden';
-        this.appendChild(ripple);
-        
-        setTimeout(() => ripple.remove(), 600);
-      });
-    });
-
-    // Add CSS for ripple effect
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes ripple {
-        to {
-          transform: scale(4);
-          opacity: 0;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-  </script>
+    <script src="js/main.js"></script>
 </body>
 </html>
