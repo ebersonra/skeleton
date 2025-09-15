@@ -7,9 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: skeleton
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -33,7 +30,7 @@ jobs:
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2.0
         with:
-          publish-dir: ./skeleton/public
+          publish-dir: ./public
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
